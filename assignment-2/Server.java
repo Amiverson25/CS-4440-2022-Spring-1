@@ -28,25 +28,25 @@ public class Server {
 
 	public void runServer() throws IOException {
 
-		Logger logger = Logger.getLogger("MyLog");  
-		FileHandler fh;  
+		Logger logger = Logger.getLogger("MyLog");
+		FileHandler fh;
 
-		try {  
+		try {
 
-			// This block configure the logger with handler and formatter  
-			fh = new FileHandler("/tmp/MyServerLogFile.log");  
+			// This block configure the logger with handler and formatter
+			fh = new FileHandler("/tmp/MyServerLogFile.log");
 			logger.addHandler(fh);
-			SimpleFormatter formatter = new SimpleFormatter();  
-			fh.setFormatter(formatter);  
+			SimpleFormatter formatter = new SimpleFormatter();
+			fh.setFormatter(formatter);
 
-			// the following statement is used to log any messages  
-			logger.info("==== RSA server log ==== ");  
+			// the following statement is used to log any messages
+			logger.info("==== RSA server log ==== ");
 
-		} catch (SecurityException e) {  
-			e.printStackTrace();  
-		} catch (IOException e) {  
-			e.printStackTrace();  
-		}  
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		while (true) {
 			try {
@@ -56,7 +56,7 @@ public class Server {
 				socketIn = new BufferedReader(new InputStreamReader(connSocket.getInputStream()));
 				socketOut = new DataOutputStream(connSocket.getOutputStream());
 
-				// Recv 
+				// Recv
 				String clientIP = connSocket.getRemoteSocketAddress().toString();
 				logger.info("Got Client's connetion: " + clientIP);
 				String pubKeySig = socketIn.readLine().trim();
@@ -82,7 +82,7 @@ public class Server {
 
 				// 1st Response to client
 				socketOut.writeBytes(encAESKey + "\n" + randomStr + " " + clientIP + "\n" + srvSig + "\n");
-
+				
 				// Recv 2
 				String sigRand = socketIn.readLine().replace("\n", "").replace("\r", "");
 				String encRandomStr = socketIn.readLine().replace("\n", "").replace("\r", "");
