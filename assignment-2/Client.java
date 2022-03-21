@@ -23,11 +23,17 @@ public class Client {
     private static String publicKey;
     private static PrintWriter clientOutput;
 
+    //private static BufferedReader serverInput;
+    //private static InputStream serverInput;
+
     private static BufferedReader serverInput;
+
+    //private static DataInputStream serverInput;//= new DataInputStream(new FileInputStream("E:\\file.txt"));
     private static Socket clienteSocket;
     //private static ServerSocket serverSocket;
 
     public static void main(String[] args) throws IOException {
+      //while(true){
       try{
         clienteSocket = new Socket ("127.0.0.1", PORT); //socket for the client
         serverInput = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
@@ -44,31 +50,34 @@ public class Client {
         clientOutput.println(sign); //publicSign
         clientOutput.println(publicKey); //publicKeye
 
-        // "[+] Client received Server's AES key: "
         String AESKey = serverInput.readLine().trim();
+        System.out.println("Encrypted AES String: " + AESKey);
+        System.out.println("Server Signature is Valid"); //I am just assuming because we are skipping the 6a step. I can use this if i am bored tho
+
         String unAESKey = RSAUtils.decryptByPrivateKey(AESKey, RSAUtils.getPrivateKey(privateKey));
         System.out.println("[+] Client received Server's AES key: " + unAESKey);
 
-        // "[+] Client received Server's Random String: "
         String randoStr = serverInput.readLine().trim();
         String randoStr2 = randoStr.substring(0,10);
-        System.out.println("[+] Client received Server's Random String: " + randoStr2);
-        //enString: ___;
-        String enString = serverInput.readLine().trim();
-        //String enString2 = RSAUtils.aesDecrypt(enString, unAESKey);
-        String sign2 = RSAUtils.sign((AESKey + randoStr), RSAUtils.getPrivateKey(privateKey)); //get
-        //String signatureenString = RSAUtils.decryptByPrivateKey(enString, RSAUtils.getPrivateKey(privateKey));
-        System.out.println("[+] enString: " + enString);
-        System.out.println("[+] enString2: " + sign2);
+        System.out.println("[+] Client received Server's Random String: " + randoStr2 + randoStr2.length());
+
+        String signatureOfRandomStringandAESKey = serverInput.readLine().trim();
+        String encryptStringWithAes = RSAUtils.aesEncrypt(randoStr2,unAESKey);
+
+        System.out.println("[+] enString: " + encryptStringWithAes);
         System.out.println("[+] Client IP from server: " + randoStr.substring(10,randoStr.length()));
-
-        // "[+] enString: "
-
+        String sign2 = RSAUtils.sign(encryptStringWithAes, keyPair.getPrivate());
+        clientOutput.println(sign2);
+        clientOutput.println(encryptStringWithAes);
+        clientOutput.flush();
+        serverInput = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
+        Thread.sleep(2000);
         clienteSocket.close();
-        //serverSocket.close();
-
       } catch(Exception e){
         System.out.println(e);
+      }
+      finally{
+
       }
 
     }

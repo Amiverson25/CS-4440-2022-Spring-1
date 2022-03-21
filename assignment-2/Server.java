@@ -82,7 +82,7 @@ public class Server {
 
 				// 1st Response to client
 				socketOut.writeBytes(encAESKey + "\n" + randomStr + " " + clientIP + "\n" + srvSig + "\n");
-				
+
 				// Recv 2
 				String sigRand = socketIn.readLine().replace("\n", "").replace("\r", "");
 				String encRandomStr = socketIn.readLine().replace("\n", "").replace("\r", "");
