@@ -65,12 +65,18 @@ public class Client {
         String encryptStringWithAes = RSAUtils.aesEncrypt(randoStr2,unAESKey);
 
         System.out.println("[+] enString: " + encryptStringWithAes);
-        System.out.println("[+] Client IP from server: " + randoStr.substring(10,randoStr.length()));
+        //System.out.println("[+] Client IP from server: " + randoStr.substring(10,randoStr.length()));
         String sign2 = RSAUtils.sign(encryptStringWithAes, keyPair.getPrivate());
         clientOutput.println(sign2);
         clientOutput.println(encryptStringWithAes);
         clientOutput.flush();
-        serverInput = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
+        String didItOkay = serverInput.readLine().trim();
+        String returnedOkSig = serverInput.readLine().trim();
+        String returnedIPAdd = serverInput.readLine().trim();
+        System.out.println("[+] Client IP from server: " + returnedIPAdd);
+        System.out.println("[+] Received Servers's sig: " + returnedOkSig);
+        System.out.println("[+] received the a okay message that says: "+ didItOkay);
+        //serverInput = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
         Thread.sleep(2000);
         clienteSocket.close();
       } catch(Exception e){
